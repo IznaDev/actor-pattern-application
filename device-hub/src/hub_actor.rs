@@ -1,5 +1,6 @@
 use super::protocol::Color;
-
+use serde::Serialize;
+use serde::Serializer;
 use std::collections::HashMap;
 use tokio::sync::mpsc;
 use tokio::sync::oneshot;
@@ -47,7 +48,7 @@ pub struct LightColor {
 }
 
 /// Snapshot immutable of the global state.
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Serialize)]
 pub struct StateSnapshot {
     pub lights: HashMap<u8, Color>,
     pub buttons: HashMap<u8, ButtonState>,
@@ -56,3 +57,9 @@ pub struct StateSnapshot {
 
 #[derive(Clone, Copy, Default)]
 pub struct ButtonState(pub bool);
+
+impl Serialize for ButtonState {
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.serialize_str(if self.0 { "pressed" } else { "released" })
+    }
+}
