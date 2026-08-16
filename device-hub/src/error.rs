@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-/// Erreurs pouvant survenir lors du handshake initial.
+/// initial handshake errors
 #[derive(Debug, Error)]
 pub enum ConnectionError {
     #[error("Handshake error")]
@@ -9,4 +9,13 @@ pub enum ConnectionError {
     IoError(#[from] std::io::Error),
     #[error("Unknown device type: {0}")]
     DevicetypeError(u8),
+}
+
+/// devices handlers errors
+#[derive(Debug, Error)]
+pub enum HubError {
+    #[error("I/O error: {0}")]
+    IoError(#[from] std::io::Error),
+    #[error("Connection closed")]
+    Disconnected,
 }
